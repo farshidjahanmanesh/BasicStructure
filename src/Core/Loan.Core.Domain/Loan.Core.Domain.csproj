@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Ardalis.Result" Version="7.2.0" />
+	  <PackageReference Include="Ardalis.Result.AspNetCore" Version="7.2.0" />
+	  <PackageReference Include="Refit" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\..\Framework\Loan.Framework.Commons\Loan.Framework.Commons.csproj" />
+  </ItemGroup>
+
+</Project>
