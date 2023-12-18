@@ -1,8 +1,14 @@
 ﻿using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
+using Loan.Framework.Commons.Contracts;
+using Loan.Framework.Commons.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using System.Text;
 
 namespace Loan.Framework.Endpoints
 {
@@ -17,49 +23,32 @@ namespace Loan.Framework.Endpoints
                 .For(ResultStatus.NotFound, HttpStatusCode.NotFound));
         }
 
-      //  public static IServiceCollection AddSwaggerGen2(this IServiceCollection services)
-      //  {
-           
-      //      return services.AddSwaggerGen(config =>
-      //      {
-      //          config.CustomSchemaIds(s => s.FullName?.Replace("+", "-"));
-      //          config.UseAllOfToExtendReferenceSchemas();
-      //          var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-      //          config.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
-      //          //config.UseInlineDefinitionsForEnums();
-      //          config.AddEnumsWithValuesFixFilters();
-      //          config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-      //          {
-      //              Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
-      //                      Enter 'Bearer' [space] and then your token in the text input below.
-      //                      \r\n\r\nExample: 'Bearer 12345abcdef'",
-      //              Name = "Authorization",
-      //              In = ParameterLocation.Header,
-      //              Type = SecuritySchemeType.ApiKey,
-      //              Scheme = "Bearer"
-      //          });
+        public static IServiceCollection AddJWTService(this IServiceCollection services,IConfiguration configuration)
+        {
+            services.AddScoped<IJWTService, JWTService>(c => new JWTService(""));
 
-      //          config.AddSecurityRequirement(new OpenApiSecurityRequirement()
-      //{
-      //        {
-      //          new OpenApiSecurityScheme
-      //          {
-      //            Reference = new OpenApiReference
-      //              {
-      //                Type = ReferenceType.SecurityScheme,
-      //                Id = "Bearer"
-      //              },
-      //              Scheme = "oauth2",
-      //              Name = "Bearer",
-      //              In = ParameterLocation.Header,
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                var Key = Encoding.UTF8.GetBytes(configuration["JWT:Key"]);
+                o.SaveToken = true;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["JWT:Issuer"],
+                    ValidAudience = configuration["JWT:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Key)
+                };
+            });
 
-      //            },
-      //            new List<string>()
-      //          }
-      //  });
+            return services;
+        }
 
-
-      //      });
-      //  }
     }
 }

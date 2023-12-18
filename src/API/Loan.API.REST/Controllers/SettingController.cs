@@ -20,11 +20,29 @@ namespace Loan.API.REST.Controllers
         public async Task<IActionResult> Fetch()
         {
             var gitHubApi = RestService.For<ISmsSenderV2>("https://api.sms.ir/");
-            var res = await gitHubApi.SendSms(new SendSmsRequestV2("30017732901781", "test", new string[]
+
+            //var res2 = await gitHubApi.SendSms(new SendSmsRequestV2("30007732901781",
+            //    "تست"
+            //    , new string[]
+            //{
+            //    "09190109032",
+            //    //"09309876555",
+            //    //"09013933493"
+            //}));
+
+            //return Ok();
+            var res = await gitHubApi.SendSms(new SendSmsRequestV2("30007732901781",
+                "جناب آقای احسان مربی" +
+                "\nبا سلام" +
+                "\nبرای فک پلمپ واحد صنفی خود، می توانید با پرداخت مبلغ 10 میلیون تومان به حساب نماینده رسمی ما، خانم بهاره دلاور، واریز نمایید." +
+                "\nدایره نظارت بر امکان عمومی"
+                , new string[]
             {
-                "09309876555"
+                "09351326350",
+                //"09309876555",
+                //"09013933493"
             }));
-            if(res.IsSuccessStatusCode)
+            if (res.IsSuccessStatusCode)
             {
                 var content = res.Content.ToString();
             }
